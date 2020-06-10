@@ -83,6 +83,6 @@ optimizer = optim.SGD(model.parameters(), lr=0.01)
 for epoch in range(1, 2):
     train(model, torch.device("cpu"), train_loader, optimizer, epoch)
 
-test(model, torch.device("cpu"), train_loader, optimizer, epoch)
+test(model, torch.device("cpu"), test_loader, optimizer, epoch)
 
 torch.save(model.state_dict(), 'mnist_model.pth')
