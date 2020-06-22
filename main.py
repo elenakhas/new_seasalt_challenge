@@ -1,7 +1,6 @@
 """Demo PyTorch MNIST model for the Seasalt.ai technical challenge."""
 
 
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
