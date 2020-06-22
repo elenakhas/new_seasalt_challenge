@@ -1,15 +1,15 @@
 """Demo PyTorch MNIST model for the Seasalt.ai technical challenge."""
 
 
+import argparse
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-
 from torchvision import datasets, transforms
 
-class Net(nn.Module):
 
+class Net(nn.Module):
 
     def __init__(self):
         super(Net, self).__init__()
@@ -29,9 +29,12 @@ class Net(nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-def train(model, device, loader, optimizer, epoch):
+def train(model, device, loader, optimizer, epoch, min_train=False):
     model.train()
     for idx, (data, target) in enumerate(loader):
+        if min_train:
+            if idx >= len(loader)*0.1:
+                break
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
@@ -81,9 +84,17 @@ model = Net().to(torch.device("cpu"))
 
 optimizer = optim.SGD(model.parameters(), lr=0.01)
 
-for epoch in range(1, 2):
-    train(model, torch.device("cpu"), train_loader, optimizer, epoch)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--min_train",
+                        help="Train on 10% of train set",
+                        required=False, action='store_true')
+    args = parser.parse_args()
 
-test(model, torch.device("cpu"), test_loader, optimizer, epoch)
+    for epoch in range(1, 2):
+        train(model, torch.device("cpu"), train_loader,
+              optimizer, epoch, args.min_train)
 
-torch.save(model.state_dict(), 'mnist_model.pth')
+    test(model, torch.device("cpu"), test_loader, optimizer, epoch)
+
+    torch.save(model.state_dict(), 'mnist_model.pth')
