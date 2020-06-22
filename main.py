@@ -1,8 +1,6 @@
 """Demo PyTorch MNIST model for the Seasalt.ai technical challenge."""
 
-import os
 
-import numpy as np
 
 import torch
 import torch.nn as nn
@@ -10,9 +8,9 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 from torchvision import datasets, transforms
-from torchvision.datasets import ImageFolder
 
 class Net(nn.Module):
+
 
     def __init__(self):
         super(Net, self).__init__()
@@ -31,6 +29,7 @@ class Net(nn.Module):
         x = self.fc2(x)
         return F.log_softmax(x, dim=1)
 
+
 def train(model, device, loader, optimizer, epoch):
     model.train()
     for idx, (data, target) in enumerate(loader):
@@ -43,6 +42,7 @@ def train(model, device, loader, optimizer, epoch):
         if idx % 5 == 0:
             print('Train epoch {} ({:.0f}%)\t Loss: {:.6f}'.format(
                 epoch, 100. * idx / len(train_loader), loss.item()))
+
 
 def test(model, device, loader, optimizer, epoch):
     model.eval()
@@ -57,7 +57,9 @@ def test(model, device, loader, optimizer, epoch):
             correct += pred.eq(target.view_as(pred)).sum().item()
     test_loss /= len(loader.dataset)
     print('Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)'.format(
-        test_loss, correct, len(loader.dataset), 100. * correct/len(loader.dataset)))
+        test_loss, correct, len(loader.dataset),
+        100. * correct/len(loader.dataset)))
+
 
 train_loader = torch.utils.data.DataLoader(
         datasets.MNIST(root='./input',
