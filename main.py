@@ -90,7 +90,7 @@ if __name__ == "__main__":
                         help="Train on 10% of train set",
                         required=False, action='store_true')
     args = parser.parse_args()
-    
+
     for epoch in range(1, 2):
         train(model, torch.device("cpu"), train_loader,
               optimizer, epoch, args.min_train)
