@@ -33,11 +33,6 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         pip install flake8
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -48,7 +43,7 @@ jobs:
         # use default flake8 settings - it will stop the build if any errors are detected
         flake8 .
         
-        # skip testing as no tests are given
+# skip testing as no tests are given
 #     - name: Test with pytest
 #       run: |
 #         pytest
