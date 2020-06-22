@@ -43,7 +43,7 @@ jobs:
         # use default flake8 settings - it will stop the build if any errors are detected
         flake8 .
         
-        # skip testing as no tests are given
+# skip testing as no tests are given
 #     - name: Test with pytest
 #       run: |
 #         pytest

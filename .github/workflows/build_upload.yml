@@ -1,0 +1,58 @@
+name: Build and Upload the model
+
+on:
+  release:
+    types: [created]
+    branches:
+      - refs/tags/*
+
+jobs:
+  build_and_train:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        # This path is specific to Ubuntu
+        path: ~/.cache/pip
+        # Look to see if there is a cache hit for the corresponding requirements file
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Executing code
+      run: |
+        python main.py
+        mv mnist_model.pth  $GITHUB_SHA.model
+    - name: Create model artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: model_file
+        path: ${{ github.sha }}.model
+        
+  upload:
+    runs-on: ubuntu-latest
+    needs: build_and_train
+    steps:
+    - name: Download the model artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: model_file
+    - name: Upload to Azure Blob
+      uses: bacongobbler/azure-blob-storage-upload@v1.1.1
+      with:
+        source_dir: model_file
+        container_name: challenge
+        connection_string: DefaultEndpointsProtocol=https;AccountName=seasaltchallenge;AccountKey=/BllvFebClfScQtmz5kHep8O2PaLAAQKWsRujRnU/sMiMDgv7XHocIfFS31GV7NGHLnsOP4xBrZcUpKmlMP7Gw==;EndpointSuffix=core.windows.net
+        sync: false
