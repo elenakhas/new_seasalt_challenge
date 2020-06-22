@@ -87,3 +87,4 @@ for epoch in range(1, 2):
 test(model, torch.device("cpu"), test_loader, optimizer, epoch)
 
 torch.save(model.state_dict(), 'mnist_model.pth')
+
