@@ -6,11 +6,11 @@ The CI pipeline will automatically check your pull requests for meeting the Pyth
 train the full model on a tagged release and upload it to the Azure Blob storage. 
 The pipeline stops execution as soon as one of the steps can not be completed.
 
-The process runs on GitHub-hosted machines, called 'runners', on the latest version of Linux Ubuntu installed on GitHub runners.
-The current version is ubuntu-18.04.  You can see the pre-installed software [here](https://github.com/actions/virtual-environments/blob/ubuntu18/20200525.2/images/linux/Ubuntu1804-README.md).
+The process runs on GitHub-hosted machines, called 'runners', on the latest version of `Linux Ubuntu` installed on GitHub runners.
+The current version is `ubuntu-18.04`.  You can see the pre-installed software [here](https://github.com/actions/virtual-environments/blob/ubuntu18/20200525.2/images/linux/Ubuntu1804-README.md).
 
 The current configuration of the pipeline runs without errors.
-Changes to the workflow .yml files may trigger errors. See below the details of the pipeline, possible errors and how to address them.
+Changes to the workflow `.yml` files and to your code may trigger errors. See below the details of the pipeline, possible errors and how to address them.
 
 ## Overview
 ![GitHub Workflow](/workflow.png)
