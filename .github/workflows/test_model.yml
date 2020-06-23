@@ -42,7 +42,7 @@ jobs:
         # flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
         # use default flake8 settings - it will stop the build if any errors are detected
-        flake8 . --enabled-extensions=ENABLED_EXTENSIONS
+        flake8 --enabled-extensions=ENABLED_EXTENSIONS . 
         
 # skip testing as no tests are given
 #     - name: Test with pytest
