@@ -1,5 +1,8 @@
 # **CI pipeline to train a MNIST dataset-based model with Pytorch**
 
+![Test MNIST model](https://github.com/elenakhas/new_seasalt_challenge/workflows/Test%20MNIST%20model/badge.svg)
+![Build and Upload the model](https://github.com/elenakhas/new_seasalt_challenge/workflows/Build%20and%20Upload%20the%20model/badge.svg)
+
 Implemented with [Github Actions](https://github.com/features/actions)
 
 The CI pipeline will automatically check your pull requests for meeting the Python code style and running end-to-end,
