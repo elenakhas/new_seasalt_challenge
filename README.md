@@ -7,13 +7,14 @@ train the full model on a tagged release and upload it to the Azure Blob storage
 The pipeline stops execution as soon as one of the steps can not be completed.
 
 The process runs on GitHub-hosted machines, called 'runners', on the latest version of Linux Ubuntu installed on GitHub runners.
-The current version is ubuntu-18.04.  You can see the pre-installed software [here](https://github.com/actions/virtual-environments/blob/ubuntu18/20200525.2/images/linux/Ubuntu1804-README.md): 
-
+The current version is ubuntu-18.04.  You can see the pre-installed software [here](https://github.com/actions/virtual-environments/blob/ubuntu18/20200525.2/images/linux/Ubuntu1804-README.md).
 
 The current configuration of the pipeline runs without errors.
-Changes to the workflow .yml files may trigger errors. See below how to address them.
+Changes to the workflow .yml files may trigger errors. See below the details of the pipeline, possible errors and how to address them.
 
 ## Overview
+![GitHub Workflow](/workflow.png)
+
 
 ## Details
 
@@ -137,7 +138,57 @@ The files use YAML syntax and have .yml file extension. If the .yml files contai
 
 If you encountered any of the errors described above concerning the CI pipeline, it is likely an easy fix to one of the .yml files. Go to .github/workflows/test_model.yml if the errors are in step 1. Use github/workflows/build_upload.yml for step 2.
 
+Examlpe: Upload artifact to a different container, fix the connection string credentials, or upload a different file:
 
+Simply go to ```github/workflows/build_upload.yml```, find the ```upload``` job, ```Upload to Azure Blob``` action and replace the corresponding values:
+
+```upload:
+    ...
+    ...
+    - name: Upload to Azure Blob
+      uses: bacongobbler/azure-blob-storage-upload@v1.1.1
+      with:
+        source_dir: model_file
+        container_name: challenge
+        connection_string: DefaultEndpointsProtocol=https;AccountName=seasaltchallenge;AccountKey=/BllvFebClfScQtmz5kHep8O2PaLAAQKWsRujRnU/sMiMDgv7XHocIfFS31GV7NGHLnsOP4xBrZcUpKmlMP7Gw==;EndpointSuffix=core.windows.net
+        sync: false
+```
+
+Possible extensions:
+
+1. Changes to default flake8 run:
+  In .github/workflows/test_model.yml, under Lint with flake8 change:
+  run:
+     flake8 .
+  to 
+  run:
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        # call flake8 on a specific file or directory:
+        flake8 . <PATH/TO/THE/FILE>
+  Make flake8 check the docstrings:
+  Under Install dependencies add: pip install flake8-docstrings
+  Add a flag --enabled-extensions=ENABLED_EXTENSIONS when calling flake8.
+    
+  More options [here](https://flake8.pycqa.org/en/latest/user/invocation.html#invocation)
+       
+2. Using multiple Python versions: example job parameters
+```
+runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+```
+Check [the documentatoin](https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions) for more options.
 
 See the [Actions Marketplace](https://github.com/marketplace?type=actions) for all available actions,
 check the [documentation](https://help.github.com/en/actions) for more information.
