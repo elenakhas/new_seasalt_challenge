@@ -28,9 +28,9 @@ Changes to the workflow `.yml` files and to your code may trigger errors. See be
 
 **2. Check out the repository**\
       **does:**\
-          - checks-out the repository under $GITHUB_WORKSPACE to be accessible in the workflow\
-          - uses a prebuilt action checkout@v2. More info here: https://github.com/actions/checkout \
-      **fails:** if the action checkout@v2 is no longer accessible.\
+          - checks-out the repository under ``$GITHUB_WORKSPACE`` to be accessible in the workflow\
+          - uses a prebuilt action ``checkout@v2``. More info here: https://github.com/actions/checkout \
+      **fails:** if ``checkout@v2`` is no longer accessible.\
       **fix:** check the action in the Marketplace
 
 **3. Set up Python**\
@@ -43,12 +43,12 @@ Changes to the workflow `.yml` files and to your code may trigger errors. See be
 **4. Cache dependencies**\
      **does:**:\
           - speeds up the run by making the dependencies inslalled via pip accessible to the workflow\
-          - uses action cache@v2. More info here: https://github.com/actions/cache
+          - uses action ``cache@v2``. More info here: https://github.com/actions/cache
 
 **5. Install dependencies**\
     **does:**\
           - runs standard shell commands to install packages\
-          - upgrades pip, setuptools and wheel if necessary\
+          - upgrades ``pip``, ``setuptools`` and ``wheel`` if necessary\
           - installs necessary dependencies from ```requirements.txt``` if specified\
           - uses cache if the installed dependencies are found\
     **fails:** if the requested packages are not compatible with the environment\
@@ -77,7 +77,7 @@ Changes to the workflow `.yml` files and to your code may trigger errors. See be
            - outputs annotations with where the problem occurred to stdout
            
          **fails:** stops if if there is at least one error - check the errors [here](https://flake8.pycqa.org/en/latest/user/error-codes.html)\
-         **fix:** edit the code to meet the standards
+         **fix:** follow the error message and edit the code to meet the standards
     
      * **7. Execute code with minimal train set**\
          **does**:
@@ -94,9 +94,11 @@ Changes to the workflow `.yml` files and to your code may trigger errors. See be
      * **8. Cleanup from I.6**
   
 #### 2. Train the full MNIST model and Upload to Azure Blob Storage
+
   * **triggered:** tagged release
   * **jobs:** build_and_train, upload
   * **steps:**
+  
      * **1 - 5:** Standard steps from I 
         
         ```build_and_train```
@@ -114,8 +116,8 @@ Changes to the workflow `.yml` files and to your code may trigger errors. See be
  
       * **7. Create and upload the model artifact**\
            **does**:
-           - uses upload-artifact@v2 action. More information: https://github.com/actions/upload-artifact 
-           - creates an artifact with the name model_artifact and uploads it to the workspace, which is accessible from Actions
+           - uses ```upload-artifact@v2``` action. More information: https://github.com/actions/upload-artifact 
+           - creates an artifact with the name ```model_artifact``` and uploads it to the workspace, which is accessible from Actions
            
            **fails:** if the action is inaccessible, or the path to the file is inaccessible (e.g. you changed the name or the location in the code)\
            **fix:** specify the correct path to the file you want to save as an artifact\
@@ -128,11 +130,11 @@ Changes to the workflow `.yml` files and to your code may trigger errors. See be
       
       * **10. Build the action:**\
          **does:**
-        - uses Azure Blob Storage Upload action from the Marketplace. More info: https://github.com/marketplace/actions/azure-blob-storage-upload
+        - uses ```Azure Blob Storage Upload``` action from the Marketplace. More info: https://github.com/marketplace/actions/azure-blob-storage-upload
 
       * **11. Download the model artifact**\
           **does:**
-        - runs action download-artifact@v1. More information: https://github.com/actions/download-artifact
+        - runs action ```download-artifact@v1```. More info: https://github.com/actions/download-artifact
         - creates a folder with the specified model file in the workspace - this step is necessary for making the file available to the subsequent actions
         
          **fails**: if the artifact does not exist - wrong name or path\
@@ -140,12 +142,13 @@ Changes to the workflow `.yml` files and to your code may trigger errors. See be
 
       * **12. Upload to Azure Blob**\
           **does:**
-        - run bacongobbler/azure-blob-storage-upload@v1.1.1 action
+        - runs ```bacongobbler/azure-blob-storage-upload@v1.1.1``` action
         - establishes the connection with the specified Azure container
         - uploads the specified model file to Azure Blob Storage with specified credentials
         
          **fails**: if the action is not accessible or the credentials are wrong\
          **fix:** check the azure credentials and modify the connection string with new credentials
+      
       * **13. Standard cleanup**
 
 ## Troubleshooting and Modifications
