@@ -18,9 +18,7 @@ Changes to the workflow .yml files may trigger errors. See below the details of 
 
 ## Details
 
-### Components:
-
-#### I. Standard steps to set up environment and clean up after the jobs are done:
+### I. Standard steps to set up environment and clean up after the jobs are done:
 
 **1.  Set up job**\
       **does:** sets up the runner, configures the environment, downloads and sets up the actions used in the workflow\
@@ -60,9 +58,9 @@ Changes to the workflow .yml files may trigger errors. See below the details of 
      **does:** saving cache, cleanup, completing the job
 
 
-#### II. Workflows with specific steps:
+### II. Workflows with specific steps:
 
- 1. Test MNIST model
+ #### 1. Test MNIST model
  
    * **triggered:** on any pull request
    * **jobs:** build_and_test
@@ -73,55 +71,61 @@ Changes to the workflow .yml files may trigger errors. See below the details of 
           - installs ```flake8-docstrings``` extension
           
       * **6. Lint with Flake8**\
-           **does:**\
-           - runs the latest version of flake8 with no parameters\
-           - checks the python code for meeting the Python code style\
-           - outputs annotations with where the problem occurred to stdout\
-           **fails:** stops if if there is at least one error - check the errors [here](https://flake8.pycqa.org/en/latest/user/error-codes.html)\
-           **fix:** edit the code to meet the standards
+           **does:**
+           - runs the latest version of flake8 with no parameters
+           - checks the python code for meeting the Python code style
+           - outputs annotations with where the problem occurred to stdout
+           
+         **fails:** stops if if there is at least one error - check the errors [here](https://flake8.pycqa.org/en/latest/user/error-codes.html)\
+         **fix:** edit the code to meet the standards
     
      * **7. Execute code with minimal train set**\
-         **does**:\
-          - runs the code in ```main.py``` with a flag ```--min_train```\
+         **does**:
+          - runs the code in ```main.py``` with a flag ```--min_train```
           - the flag stops the iteration over the train loader when the index reaches 10% of the train data\
-          - ```main.py:```\
-                - trains the model on 10% of the train data\
-                - tests the model on a full test dataset\
-                - outputs the model into a file specified in the code\
-         **fails:** if unable to execute the code\
-         **fix:** follow the error message and debug your code - this is not a CI problem
-    * **8. Cleanup from I.6**
+          - ```main.py:```
+                - trains the model on 10% of the train data
+                - tests the model on a full test dataset
+                - outputs the model into a file specified in the code
+                
+       **fails:** if unable to execute the code\
+       **fix:** follow the error message and debug your code - this is not a CI problem
+         
+     * **8. Cleanup from I.6**
   
-  2. Train the full MNIST model and Upload to Azure Blob Storage
-    * **triggered:** tagged release
-    * **jobs:** build_and_train, upload
-    * **steps:**
-      * **1 - 5:** Standard steps from I \
+#### 2. Train the full MNIST model and Upload to Azure Blob Storage
+  * **triggered:** tagged release
+  * **jobs:** build_and_train, upload
+  * **steps:**
+     * **1 - 5:** Standard steps from I 
         
         ```build_and_train```
 
       * **6. Execute the code to train the model**\
-            **does**: \
-           - runs the code in main.py without any flags\
-             * ```main.py:```\
-           - trains the model on full train data\
-           - tests the model on a full test dataset\
-           - outputs the model into a file specified in the code: ```'mnist_model.pth'```\
+            **does**: 
+           - runs the code in main.py without any flags
+           ```main.py:```
+           - trains the model on full train data
+           - tests the model on a full test dataset
+           - outputs the model into a file specified in the code: ```'mnist_model.pth'```
+           
            **fails:** if unable to execute the code\
            **fix:** follow the error message and debug your code - this is not a CI problem\
  
       * **7. Create and upload the model artifact**\
-           **does**:\
-           - uses upload-artifact@v2 action. More information: https://github.com/actions/upload-artifact \
-           - creates an artifact with the name model_artifact and uploads it to the workspace, which is accessible from Actions\
+           **does**:
+           - uses upload-artifact@v2 action. More information: https://github.com/actions/upload-artifact 
+           - creates an artifact with the name model_artifact and uploads it to the workspace, which is accessible from Actions
+           
            **fails:** if the action is inaccessible, or the path to the file is inaccessible (e.g. you changed the name or the location in the code)\
            **fix:** specify the correct path to the file you want to save as an artifact\
  
-      * **8. Cleanup as in I.6.
+      * **8. Cleanup as in I.6.**
  
       ```upload```: relies on the completeness of the previous step
 
       * **9. Standard setup 1-5**
+      
       * **10. Build the action:**\
          **does:**
         - uses Azure Blob Storage Upload action from the Marketplace. More info: https://github.com/marketplace/actions/azure-blob-storage-upload
@@ -130,14 +134,16 @@ Changes to the workflow .yml files may trigger errors. See below the details of 
           **does:**
         - runs action download-artifact@v1. More information: https://github.com/actions/download-artifact
         - creates a folder with the specified model file in the workspace - this step is necessary for making the file available to the subsequent actions
+        
          **fails**: if the artifact does not exist - wrong name or path\
          **fix:** check the name of the artifact
 
-      * **12. Upload to Azure Blob**
+      * **12. Upload to Azure Blob**\
           **does:**
         - run bacongobbler/azure-blob-storage-upload@v1.1.1 action
         - establishes the connection with the specified Azure container
         - uploads the specified model file to Azure Blob Storage with specified credentials
+        
          **fails**: if the action is not accessible or the credentials are wrong\
          **fix:** check the azure credentials and modify the connection string with new credentials
       * **13. Standard cleanup**
